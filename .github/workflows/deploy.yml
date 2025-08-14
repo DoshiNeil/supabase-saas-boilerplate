@@ -21,8 +21,10 @@ jobs:
     - name: Deploy to Supabase
       run: |
         npx supabase login --token ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        npx supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        # Alternative approach using environment variable
+        SUPABASE_DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD }} npx supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
         npx supabase functions deploy hello-world
       env:
         SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
