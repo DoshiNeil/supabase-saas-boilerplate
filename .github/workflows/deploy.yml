@@ -9,22 +9,16 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_REF }}
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - uses: supabase/setup-cli@v1
       with:
-        node-version: '18'
+        version: latest
 
-    - name: Deploy to Supabase
-      run: |
-        npx supabase login --token ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        # Alternative approach using environment variable
-        SUPABASE_DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD }} npx supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
-        npx supabase functions deploy hello-world
-      env:
-        SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-        SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    - name: Deploy Functions
+      run: supabase functions deploy --project-ref $PROJECT_ID
